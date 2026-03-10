@@ -1,238 +1,142 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Projet Codole – Dashboards OEHC</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="utf-8"/>
+<title>Dashboards Codole</title>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      color: white;
-      min-height: 100vh;
-      background:
-        linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-        url("fond_codole.jpg"),
-        url("https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg");
-      background-size: cover, cover, cover;
-      background-position: center, center, center;
-      background-repeat: no-repeat, no-repeat, no-repeat;
-      background-attachment: fixed, fixed, fixed;
-    }
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
-    .overlay {
-      min-height: 100vh;
-      width: 100%;
-      padding: 60px 20px 40px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+<style>
 
-    .main-box {
-      width: 100%;
-      max-width: 1100px;
-      background: rgba(0, 0, 0, 0.48);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 18px;
-      padding: 40px;
-      backdrop-filter: blur(4px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.30);
-    }
+body{
+margin:0;
+font-family:Arial;
+color:white;
+overflow:hidden;
+}
 
-    .title {
-      text-align: center;
-      margin-bottom: 12px;
-      font-size: 2.3rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
+/* carte en fond */
 
-    .subtitle {
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 1.1rem;
-      color: rgba(255,255,255,0.92);
-    }
+#map{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:0;
+}
 
-    .meta {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 28px;
-    }
+/* panneau contenu */
 
-    .meta-card {
-      background: rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 18px 20px;
-    }
+.overlay{
+position:relative;
+z-index:10;
+background:rgba(0,0,0,0.65);
+min-height:100vh;
+padding:60px;
+text-align:center;
+}
 
-    .meta-card strong {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 0.98rem;
-      color: #ffffff;
-    }
+.container{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+margin-top:40px;
+}
 
-    .meta-card a {
-      color: #9fd0ff;
-      text-decoration: none;
-      font-weight: 600;
-    }
+.card{
+background:rgba(255,255,255,0.1);
+padding:30px;
+border-radius:10px;
+width:260px;
+backdrop-filter:blur(4px);
+}
 
-    .meta-card a:hover {
-      text-decoration: underline;
-    }
+.button{
+display:inline-block;
+margin-top:15px;
+padding:12px 20px;
+background:#1f6feb;
+color:white;
+text-decoration:none;
+border-radius:6px;
+font-weight:bold;
+}
 
-    .section {
-      background: rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 22px 24px;
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
+.button:hover{
+background:#1558b0;
+}
 
-    .section h2 {
-      margin-top: 0;
-      margin-bottom: 14px;
-      font-size: 1.2rem;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 22px;
-      margin-top: 24px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.10);
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.18);
-    }
-
-    .card h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 1.25rem;
-    }
-
-    .card p {
-      margin-bottom: 18px;
-      line-height: 1.55;
-      color: rgba(255,255,255,0.92);
-    }
-
-    .button {
-      display: inline-block;
-      padding: 12px 18px;
-      border-radius: 8px;
-      background: #1f6feb;
-      color: white;
-      text-decoration: none;
-      font-weight: 700;
-      transition: background 0.2s ease;
-    }
-
-    .button:hover {
-      background: #1558b0;
-    }
-
-    .note {
-      margin-top: 26px;
-      font-size: 0.95rem;
-      color: rgba(255,255,255,0.82);
-      text-align: center;
-    }
-
-    @media (max-width: 850px) {
-      .meta {
-        grid-template-columns: 1fr;
-      }
-
-      .main-box {
-        padding: 28px 20px;
-      }
-
-      .title {
-        font-size: 1.8rem;
-      }
-    }
-  </style>
+</style>
 </head>
 
 <body>
-  <div class="overlay">
-    <div class="main-box">
 
-      <div class="title">Projet Codole – Tableaux de bord interactifs</div>
-      <div class="subtitle">
-        Visualisation et exploration des données client au point barrage
-      </div>
+<div id="map"></div>
 
-      <div class="meta">
-        <div class="meta-card">
-          <strong>Créateur du dashboard</strong>
-          <a href="https://www.pixstart.io/" target="_blank">Société Pixstart</a>
-        </div>
+<div class="overlay">
 
-        <div class="meta-card">
-          <strong>Client</strong>
-          <a href="https://www.oehc.corsica/" target="_blank">OEHC</a>
-        </div>
-      </div>
+<h1>Projet Codole – Tableaux de bord</h1>
 
-      <div class="section">
-        <h2>But du dashboard</h2>
-        <p>
-          Cette interface a pour objectif de visualiser les données client au point barrage,
-          en distinguant d’une part les données de qualité de l’eau avec à la fois les profils
-          verticaux et les séries temporelles, et d’autre part les données de stock et de volume
-          du lac. L’ensemble des contenus présentés repose sur des données client, pour lesquelles
-          Pixstart a réalisé le travail de mise en page, de structuration et de valorisation visuelle.
-        </p>
-      </div>
+<p>
+Créateur du dashboard :
+<a href="https://www.pixstart.io/" target="_blank" style="color:#9fd0ff;">Pixstart</a>
+</p>
 
-      <div class="section">
-        <h2>Périodes couvertes</h2>
-        <p>
-          Les données de qualité de l’eau couvrent la période 2018–2025.
-          Les données de stock et de volume couvrent la période 1991–2025.
-        </p>
-      </div>
+<p>
+Client :
+<a href="https://www.oehc.corsica/" target="_blank" style="color:#9fd0ff;">OEHC</a>
+</p>
 
-      <div class="cards">
-        <div class="card">
-          <h3>Dashboard stock et volume</h3>
-          <p>
-            Accès au tableau de bord dédié aux séries historiques de stock et de volume du lac,
-            avec visualisation des dynamiques interannuelles sur la période 1991–2025.
-          </p>
-          <a class="button" href="dashboard_stock_volume.html">Ouvrir le dashboard</a>
-        </div>
+<p>
+Visualisation des données client au point barrage : profils verticaux,
+séries temporelles de qualité de l’eau, ainsi que les données de stock
+et de volume du lac.
+</p>
 
-        <div class="card">
-          <h3>Dashboard données de qualité au barrage</h3>
-          <p>
-            Accès au tableau de bord dédié aux données de qualité de l’eau au point barrage,
-            incluant les profils verticaux et les dynamiques temporelles sur la période 2018–2025.
-          </p>
-          <a class="button" href="dashboard_qualite_eau_barrage.html">Ouvrir le dashboard</a>
-        </div>
-      </div>
+<p>
+Qualité de l’eau : 2018–2025  
+<br>
+Stock et volume : 1991–2025
+</p>
 
-      <div class="note">
-        Projet Codole – Données client OEHC mises en forme par Pixstart
-      </div>
+<div class="container">
 
-    </div>
-  </div>
+<div class="card">
+<h2>Stock et volume</h2>
+<a class="button" href="dashboard_stock_volume.html">Ouvrir</a>
+</div>
+
+<div class="card">
+<h2>Données de qualité au barrage</h2>
+<a class="button" href="dashboard_qualite_eau_barrage.html">Ouvrir</a>
+</div>
+
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+
+var map = L.map('map', {
+zoomControl:false,
+scrollWheelZoom:false,
+dragging:false
+}).setView([42.586621, 8.946079], 10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+attribution:'© OpenStreetMap'
+}).addTo(map);
+
+L.marker([42.586621, 8.946079])
+.addTo(map)
+.bindPopup("Lac de Codole");
+
+</script>
+
 </body>
 </html>
