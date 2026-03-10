@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dashboards OEHC</title>
+
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #f4f6f8;
+text-align: center;
+margin: 0;
+padding: 60px;
+}
+
+h1 {
+margin-bottom: 40px;
+}
+
+.container {
+display: flex;
+justify-content: center;
+gap: 40px;
+flex-wrap: wrap;
+}
+
+.card {
+background: white;
+padding: 30px;
+border-radius: 10px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+width: 260px;
+}
+
+a.button {
+display: inline-block;
+margin-top: 15px;
+padding: 12px 20px;
+background: #1f6feb;
+color: white;
+text-decoration: none;
+border-radius: 6px;
+font-weight: bold;
+}
+
+a.button:hover {
+background: #1558b0;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Tableaux de bord du projet OEHC</h1>
+
+<div class="container">
+
+<div class="card">
+<h2>Stock et volume</h2>
+<p>Visualisation des stocks et volumes des barrages.</p>
+<a class="button" href="dashboard_stock_volume.html">Ouvrir le dashboard</a>
+</div>
+
+<div class="card">
+<h2>Qualité de l'eau</h2>
+<p>Données de qualité de l'eau des barrages.</p>
+<a class="button" href="dashboard_qualite_eau_barrage.html">Ouvrir le dashboard</a>
+</div>
+
+</div>
+
+</body>
+</html>
